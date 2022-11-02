@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Category(models.Model):
@@ -77,4 +78,68 @@ class Title(models.Model):
     
     def __str__(self):
         return self.name
+        
+
+class Review(models.Model):
+    """Отзывы."""
+    text = models.TextField(
+        verbose_name='Отзыв',
+        help_text='Напишите отзыв',
+    )
+    author = models.ForeignKey(
+        User, #надо импортнуть
+        on_delete=models.CASCADE,
+        related_name="reviews",
+        verbose_name="Автор отзыва",
+    )
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        related_name="titles",
+        verbose_name='Название',
+    )
+    score = models.IntegerField(
+        validators=(
+            MinValueValidator(1),
+            MaxValueValidator(10)
+        ),
+        verbose_name="Оценка",
+        help_text='Введите оценку'
+    )
+    pub_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Дата публикации отзыва",
+        help_text='Дата публикации отзыва'
+    )
+
+    def __str__(self):
+        return self.text
+
+
+class Comment(models.Model):
+    """Модель комментариев"""
+    text = models.TextField(
+        verbose_name='Комментарий',
+        help_text='Введите комментарий',
+    )
+    author = models.ForeignKey(
+        User, #надо импортнуть
+        on_delete=models.CASCADE,
+        related_name="comments",
+        verbose_name="Автор комментария",
+    )
+    review = models.ForeignKey(
+        Review,
+        on_delete=models.CASCADE,
+        related_name="comments",
+        verbose_name='Отзыв',
+    )
+    pub_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Дата публикации коммента",
+        help_text='Дата публикации коммента'
+    )
+
+    def __str__(self):
+        return self.text
 
