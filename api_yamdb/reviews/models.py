@@ -4,7 +4,7 @@ from django.db import models
 class Category(models.Model):
     """Категории произведений"""
     name = models.CharField(
-        max_length=250,
+        max_length=250, #!!!ПРОВЕРЬ!!!
         verbose_name='Название категории'
     )
     slug = models.SlugField(
@@ -23,11 +23,11 @@ class Category(models.Model):
 class Genre(models.Model):
     """Жанры произведений"""
     name = models.CharField(
-        max_length=250,
+        max_length=250,  #!!!ПРОВЕРЬ!!!
         verbose_name='Название категории'
     )
     slug = models.SlugField(
-        unique=True,
+        unique=True, #!!!ДОБАВИТЬ МАКС КОЛ-ВО ЗНАЧЕНИЙ!!!
         verbose_name='Слаг жанра'
     )
 
@@ -67,7 +67,7 @@ class Title(models.Model):
         help_text='Введите категорию произведения',
     )
     genre = models.ManyToManyField(
-        Genre,
+        Genre, #Надо ли указывать on_delete, help_text, null?
         blank=True,
         db_index=True
     )
@@ -77,3 +77,4 @@ class Title(models.Model):
     
     def __str__(self):
         return self.name
+
