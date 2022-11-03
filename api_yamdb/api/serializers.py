@@ -1,5 +1,7 @@
 from reviews.models import Category, Genre, Title
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
+from users.models import User
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -41,3 +43,44 @@ class TitleCreateSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'name', 'year', 'description', 'genre', 'category')
         model = Title
+
+
+class UsersSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        required=True,
+        validators=[
+            UniqueValidator(
+                queryset=User.objects.all(),
+                message='Такой адрес уже зарегистрирован.'
+            )
+        ]
+    )
+    username = serializers.CharField(
+        required=True,
+        validators=[
+            UniqueValidator(
+                queryset=User.objects.all(),
+                message='Такой username уже зарегистрирован.'
+            )
+        ]
+    )
+
+    class Meta:
+        model = User
+        fields = (
+            'username', 'email', 'first_name', 'last_name', 'bio', 'role'
+        )
+
+    def validate_username(self, username):
+        """Проверяет чтобы username был не меньше 3 символов."""
+        if len(username) < 3:
+            raise serializers.ValidationError(
+                'Username должен быть длиннее двух символов.'
+            )
+        return username
+
+    def validate_role(self, role):
+        """Менять поле role разрешено только для админа и суперпользоватеня"""
+        if self.instance.role == 'admin' or self.instance.is_superuser:
+            return role
+        return self.instance.role
