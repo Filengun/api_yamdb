@@ -77,7 +77,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
  
  
- class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(viewsets.ModelViewSet):
     """Категория,."""
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
