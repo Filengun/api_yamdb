@@ -2,15 +2,15 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 ROLE = (
-    ('ADMIN', 'admin'),
-    ('MODERATOR', 'moderator'),
-    ('USER', 'user')
+    ('admin', 'admin'),
+    ('moderator', 'moderator'),
+    ('user', 'user')
 )
 
 
 class User(AbstractUser):
     first_name = models.CharField(max_length=150, blank=True)
-    role = models.CharField(choices=ROLE, max_length=50, default='USER') #даша: max_length=50, чтобы запустился сервак
+    role = models.CharField(choices=ROLE, max_length=50, default='user') #даша: max_length=50, чтобы запустился сервак
     bio = models.CharField(verbose_name='Биография', max_length=1024, blank=True) #даша: max_length=1024, чтобы запустился сервак
     email = models.EmailField(
         max_length=254,
