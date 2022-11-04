@@ -1,7 +1,11 @@
+from tabnanny import verbose
 from django.db import models
+from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from users.models import User #даша - импортнула юзера, дабы без ошибок было
 
+
+User = get_user_model()
 
 class Category(models.Model):
     """Категории произведений"""
@@ -91,7 +95,7 @@ class Review(models.Model):
         help_text='Напишите отзыв',
     )
     author = models.ForeignKey(
-        User, #надо импортнуть
+        User,
         on_delete=models.CASCADE,
         related_name="reviews",
         verbose_name="Автор отзыва",
@@ -99,7 +103,7 @@ class Review(models.Model):
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
-        related_name="titles",
+        related_name="reviews",
         verbose_name='Название',
     )
     score = models.IntegerField(
@@ -112,9 +116,13 @@ class Review(models.Model):
     )
     pub_date = models.DateTimeField(
         auto_now_add=True,
-        verbose_name="Дата публикации отзыва",
-        help_text='Дата публикации отзыва'
+        verbose_name="Дата публикации отзыва"
     )
+
+    class Meta:
+        ordering = ['-pub_date']
+        verbose_name = 'Отзыв'
+        verbose_name_plural = 'Отзывы'
 
     def __str__(self):
         return self.text
@@ -127,7 +135,7 @@ class Comment(models.Model):
         help_text='Введите комментарий',
     )
     author = models.ForeignKey(
-        User, #надо импортнуть
+        User,
         on_delete=models.CASCADE,
         related_name="comments",
         verbose_name="Автор комментария",
@@ -144,6 +152,10 @@ class Comment(models.Model):
         help_text='Дата публикации коммента'
     )
 
+    class Meta:
+        ordering = ['-pub_date']
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментраии'
+        
     def __str__(self):
         return self.text
-
