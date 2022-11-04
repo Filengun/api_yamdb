@@ -122,6 +122,12 @@ REST_FRAMEWORK = {
     ],
 }
 
+#Ребята, я добавила пагинацию ♡♡♡♡♡ По умолчанию, где пагинейшон класс будет не описан, то будет использоваться по умолчанию. Но можно добавить pagination_class во вью.
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
+} 
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),

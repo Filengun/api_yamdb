@@ -1,11 +1,12 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from users.models import User #даша - импортнула юзера, дабы без ошибок было
 
 
 class Category(models.Model):
     """Категории произведений"""
     name = models.CharField(
-        max_length=250, #!!!ПРОВЕРЬ!!!
+        max_length=256,
         verbose_name='Название категории'
     )
     slug = models.SlugField(
@@ -24,11 +25,12 @@ class Category(models.Model):
 class Genre(models.Model):
     """Жанры произведений"""
     name = models.CharField(
-        max_length=250,  #!!!ПРОВЕРЬ!!!
+        max_length=256,
         verbose_name='Название категории'
     )
     slug = models.SlugField(
-        unique=True, #!!!ДОБАВИТЬ МАКС КОЛ-ВО ЗНАЧЕНИЙ!!!
+        max_length=50,
+        unique=True,
         verbose_name='Слаг жанра'
     )
 
@@ -42,7 +44,7 @@ class Genre(models.Model):
 class Title(models.Model):
     """Произведения (база)"""
     name = models.CharField(
-        max_length=250, 
+        max_length=256, 
         verbose_name='Название',
         help_text='Введите название',
     )
@@ -68,9 +70,11 @@ class Title(models.Model):
         help_text='Введите категорию произведения',
     )
     genre = models.ManyToManyField(
-        Genre, #Надо ли указывать on_delete, help_text, null?
+        Genre,
         blank=True,
-        db_index=True
+        db_index=True,
+        verbose_name='Жанр',
+        help_text='Введите жанр произведения',
     )
 
     class Meta:
