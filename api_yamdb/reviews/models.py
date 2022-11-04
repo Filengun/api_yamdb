@@ -44,7 +44,7 @@ class Genre(models.Model):
 class Title(models.Model):
     """Произведения (база)"""
     name = models.CharField(
-        max_length=250, 
+        max_length=256, 
         verbose_name='Название',
         help_text='Введите название',
     )

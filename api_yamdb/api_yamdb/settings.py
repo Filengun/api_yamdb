@@ -112,3 +112,10 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
 #EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'НАЗВАНИЕ ПАПКИ')
 
 #Также про токены и auth не забудь ♡♡♡♡
+
+
+#Ребята, я добавила пагинацию ♡♡♡♡♡ По умолчанию, где пагинейшон класс будет не описан, то будет использоваться по умолчанию. Но можно добавить pagination_class во вью.
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
+} 
