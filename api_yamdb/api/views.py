@@ -11,6 +11,11 @@ from api.serializers import (TokenSerializer, UsersSerializer)
 from users.models import User
 from django.contrib.auth.tokens import default_token_generator
 
+from rest_framework.filters import SearchFilter
+from .filters import TitlesFilter
+from .permissions import IsAdminOrSuperUser, IsAdminOrReadOnly
+from django.db.models import Avg #Для рейтинга
+
 from api_yamdb.services import send_confirmation_code
 
 
@@ -78,22 +83,30 @@ class UserViewSet(viewsets.ModelViewSet):
  
  
 class CategoryViewSet(viewsets.ModelViewSet):
-    """Категория,."""
+    """Категории. GET, POST, DEL."""
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     search_fields = ('name',)
+    filter_backends = [SearchFilter]
+    lookup_field = 'slug'
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class GenreViewSet(viewsets.ModelViewSet):
-    """Жанр, ."""
+    """Жанр. GET, POST, DEL."""
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     search_fields = ('name',)
+    filter_backends = [SearchFilter]
+    lookup_field = 'slug'
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    """Произведения, ."""
-    queryset = Title.objects.all()
+    """Произведения.GET, POST, PATCH, DEL."""
+    queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
+    filter_class = TitlesFilter
+    permission_classes = (IsAdminOrReadOnly,)
     # serializer_class = TitleListSerializer
     def get_serializer_class(self):
         if self.request.method in permissions.SAFE_METHODS:
