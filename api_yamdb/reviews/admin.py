@@ -11,8 +11,8 @@ class ReviewAdmin(admin.ModelAdmin):
         'score',
         'pub_date'
     )
-    list_filter = ('pub_date')
-    search_fields = ('text')
+    list_filter = ('pub_date',)
+    search_fields = ('text',)
     empty_value_display = '-none-'
 
 
@@ -24,8 +24,8 @@ class CommentAdmin(admin.ModelAdmin):
         'review',
         'pub_date'
     )
-    list_filter = ('pub_date')
-    search_fields = ('text')
+    list_filter = ('pub_date',)
+    search_fields = ('text',)
     empty_value_display = '-none-'
 
 

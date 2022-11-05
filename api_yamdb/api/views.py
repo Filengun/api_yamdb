@@ -11,6 +11,9 @@ from api.serializers import (TokenSerializer, UsersSerializer)
 from users.models import User
 from django.contrib.auth.tokens import default_token_generator
 
+from rest_framework.filters import SearchFilter
+from .filters import TitlesFilter
+
 from api_yamdb.services import send_confirmation_code
 
 
@@ -82,6 +85,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     search_fields = ('name',)
+    filter_backends = [SearchFilter]
 
 
 class GenreViewSet(viewsets.ModelViewSet):
@@ -89,11 +93,12 @@ class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     search_fields = ('name',)
-
+    filter_backends = [SearchFilter]
 
 class TitleViewSet(viewsets.ModelViewSet):
     """Произведения, ."""
     queryset = Title.objects.all()
+    filter_class = TitlesFilter
     # serializer_class = TitleListSerializer
     def get_serializer_class(self):
         if self.request.method in permissions.SAFE_METHODS:
