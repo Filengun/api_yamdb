@@ -1,5 +1,6 @@
 from reviews.models import Category, Genre, Title
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 from users.models import User
 
 
@@ -15,6 +16,7 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('name', 'slug',)
         model = Genre
+
 
 class TitleListSerializer(serializers.ModelSerializer):
     """Сериализатор получения списка произведений"""
@@ -47,10 +49,22 @@ class TitleCreateSerializer(serializers.ModelSerializer):
 
 class UsersSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
-        required=True
+        required=True,
+        validators=[
+            UniqueValidator(
+                queryset=User.objects.all(),
+                message='Такой адрес уже зарегистрирован.'
+            )
+        ]
     )
     username = serializers.CharField(
-        required=True
+        required=True,
+        validators=[
+            UniqueValidator(
+                queryset=User.objects.all(),
+                message='Такой username уже зарегистрирован.'
+            )
+        ]
     )
 
     class Meta:
@@ -68,12 +82,17 @@ class UsersSerializer(serializers.ModelSerializer):
         return username
 
     def validate_role(self, role):
-        """Менять поле role разрешено только для админа и суперпользоватеня"""
+        """Менять поле role разрешено только для админа и суперпользоватеня."""
         if not self.instance:
             return role
         if self.instance.role == 'admin' or self.instance.is_superuser:
             return role
         return self.instance.role
+
+
+class UserPersonalDataSerializer(UsersSerializer):
+    email = serializers.EmailField(required=False)
+    username = serializers.CharField(required=False)
 
 
 class TokenSerializer(serializers.Serializer):

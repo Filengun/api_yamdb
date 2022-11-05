@@ -20,7 +20,7 @@ from api_yamdb.services import send_confirmation_code
 
 
 from django.shortcuts import render
-from .serializers import CategorySerializer, GenreSerializer, TitleListSerializer, TitleCreateSerializer
+from .serializers import CategorySerializer, GenreSerializer, TitleListSerializer, TitleCreateSerializer, UserPersonalDataSerializer
 from reviews.models import Category, Comment, Genre, Review, Title
 from rest_framework import permissions
 
@@ -70,9 +70,9 @@ class UserViewSet(viewsets.ModelViewSet):
         methods=('GET', 'PATCH'),
         url_path='me',
         permission_classes=(IsAuthenticated,),
-        serializer_class=UsersSerializer
+        serializer_class=UserPersonalDataSerializer
     )
-    def me(self, request):
+    def personal_data(self, request):
         if request.method == 'PATCH':
             serializer = self.get_serializer(request.user, request.data)
             serializer.is_valid(raise_exception=True)

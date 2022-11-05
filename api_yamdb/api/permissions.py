@@ -2,18 +2,26 @@ from rest_framework import permissions
 
 
 class IsAdminOrSuperUser(permissions.BasePermission):
+    """Запросы разрешено отправлять только пользователям со статусом superuser
+    или ролью admin.
+    """
     def has_permission(self, request, view):
-        return (request.user.is_authenticated and
-                (request.user.role == 'admin' or request.user.is_superuser))
-
-    def has_object_permission(self, request, view, obj):
-        return (request.user.role == 'admin' or request.user.is_superuser)
+        return (
+            request.user.is_authenticated
+            and (request.user.role == 'admin' or request.user.is_superuser)
+        )
 
 
 class IsModerator(permissions.BasePermission):
+    """Запросы разрешено отправлять только пользователям с ролью не ниже
+    модератора.
+    """
     def has_permission(self, request, view):
         return (
-            request.user.is_authenticated and request.user.role == 'moderator')
+            request.user.is_authenticated
+            and (request.user.role in ('moderator', 'admin')
+                 or request.user.is_superuser)
+        )
 
 #Мне нужен пермишен без аутотефикации
 class IsAdminOrReadOnly(permissions.BasePermission):
