@@ -97,13 +97,13 @@ http://127.0.0.1:8000/api/v1/auth/token/
 ```
 
 ### [Полная документация API (redoc.yaml)](https://github.com/Filengun/api_yamdb/blob/master/api_yamdb/static/redoc.yaml)
-### Либо по документации из API:
+### Либо по документации из API
 
 ```
 http://127.0.0.1:8000/redoc/
 ```
 
-## Техническое описание проекта YaMDb:
+## Техническое описание проекта
 
 Клонировать репозиторий и перейти в него
 
