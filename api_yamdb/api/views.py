@@ -13,7 +13,7 @@ from django.contrib.auth.tokens import default_token_generator
 
 from rest_framework.filters import SearchFilter
 from .filters import TitlesFilter
-from .permissions import IsAdminOrSuperUser, IsModerator, IsAdminOrReadOnly
+from .permissions import IsAdminOrSuperUser, IsAdminOrReadOnly
 from django.db.models import Avg #Для рейтинга
 
 from api_yamdb.services import send_confirmation_code
