@@ -22,6 +22,64 @@ from .serializers import CategorySerializer, GenreSerializer, TitleListSerialize
 from reviews.models import Category, Comment, Genre, Review, Title
 from rest_framework import permissions
 
+
+class UserSignupView(GenericAPIView):
+    serializer_class = UsersSerializer
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user, _ = User.objects.get_or_create(**serializer.validated_data)
+        confirmation_code = default_token_generator.make_token(user)
+        send_confirmation_code(
+            email=user.email,
+            confirmation_code=confirmation_code
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserGetTokenView(GenericAPIView):
+    serializer_class = TokenSerializer
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        username = serializer.validated_data.get('username')
+        confirmation_code = serializer.validated_data.get('confirmation_code')
+        user = get_object_or_404(User, username=username)
+
+        if not default_token_generator.check_token(user, confirmation_code):
+            return Response({'confirmation_code': 'неверный код'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        return Response({'token': str(AccessToken.for_user(user))},
+                        status=status.HTTP_200_OK)
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UsersSerializer
+    permission_classes = (IsAdminOrSuperUser,)
+    lookup_field = 'username'
+
+    @action(
+        detail=False,
+        methods=('GET', 'PATCH'),
+        url_path='me',
+        permission_classes=(IsAuthenticated,),
+        serializer_class=UsersSerializer
+    )
+    def me(self, request):
+        if request.method == 'PATCH':
+            serializer = self.get_serializer(request.user, request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+ 
+ 
 class CategoryViewSet(viewsets.ModelViewSet):
     """Категория,."""
     queryset = Category.objects.all()
@@ -46,5 +104,3 @@ class TitleViewSet(viewsets.ModelViewSet):
         if self.request.method in permissions.SAFE_METHODS:
             return TitleListSerializer
         return TitleCreateSerializer
-
-
