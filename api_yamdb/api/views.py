@@ -37,6 +37,7 @@ from rest_framework import permissions
 
 
 class UserSignupView(GenericAPIView):
+    """Юзер СайнАпВью."""
     serializer_class = UserSignUpSerializer
     permission_classes = (AllowAny,)
 
@@ -53,6 +54,7 @@ class UserSignupView(GenericAPIView):
 
 
 class UserGetTokenView(GenericAPIView):
+    """Юзер ГетТокенВью."""
     serializer_class = TokenSerializer
     permission_classes = (AllowAny,)
 
@@ -71,6 +73,7 @@ class UserGetTokenView(GenericAPIView):
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    """Юзер вью-сет."""
     queryset = User.objects.all()
     serializer_class = UsersSerializer
     permission_classes = (IsAdminOrSuperUser,)
@@ -150,6 +153,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
+    """Просмотр и редактирование отзывов."""
     permission_classes = (IsAuthUserOrAuthorOrModerOrAdmin,)
     serializer_class = ReviewSerializer
     pagination_class = LimitOffsetPagination
