@@ -1,7 +1,6 @@
-from tabnanny import verbose
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-from users.models import User #даша - импортнула юзера, дабы без ошибок было
+from users.models import User
 
 
 class Category(models.Model):
@@ -45,14 +44,13 @@ class Genre(models.Model):
 class Title(models.Model):
     """Произведения (база)"""
     name = models.CharField(
-        max_length=256, 
+        max_length=256,
         verbose_name='Название',
         help_text='Введите название',
     )
-    #поле year не обязательное, думаю, тут нужна валидация, но позже
     year = models.IntegerField(
         null=True,
-        blank=True, 
+        blank=True,
         verbose_name='Год',
         help_text='Введите год релиза',
     )
@@ -80,10 +78,10 @@ class Title(models.Model):
 
     class Meta:
         verbose_name = 'Произведение'
-    
+
     def __str__(self):
         return self.name
-        
+
 
 class Review(models.Model):
     """Отзывы."""
@@ -158,6 +156,6 @@ class Comment(models.Model):
         ordering = ['-pub_date']
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментраии'
-        
+
     def __str__(self):
         return self.text

@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
@@ -13,14 +13,25 @@ from django.contrib.auth.tokens import default_token_generator
 
 from rest_framework.filters import SearchFilter
 from .filters import TitlesFilter
-from .permissions import IsAuthorOrReadOnly, IsAdminOrSuperUser, IsAdminOrReadOnly, IsAuthUserOrAuthorOrModerOrAdmin
-from django.db.models import Avg #Для рейтинга
+from .permissions import (
+    IsAdminOrSuperUser,
+    IsAdminOrReadOnly,
+    IsAuthUserOrAuthorOrModerOrAdmin
+)
+from django.db.models import Avg
 
 from api_yamdb.services import send_confirmation_code
 
-
-from django.shortcuts import render
-from .serializers import CategorySerializer, GenreSerializer, TitleListSerializer, TitleCreateSerializer, UserPersonalDataSerializer, UserSignUpSerializer, ReviewSerializer, CommentSerializer
+from .serializers import (
+    CategorySerializer,
+    GenreSerializer,
+    TitleListSerializer,
+    TitleCreateSerializer,
+    UserPersonalDataSerializer,
+    UserSignUpSerializer,
+    ReviewSerializer,
+    CommentSerializer
+)
 from reviews.models import Category, Comment, Genre, Review, Title
 from rest_framework import permissions
 
@@ -80,8 +91,8 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         serializer = self.get_serializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
- 
- 
+
+
 class CategoryViewSet(viewsets.ModelViewSet):
     """Категории. GET, POST, DEL."""
     queryset = Category.objects.all()
@@ -131,7 +142,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
     filter_class = TitlesFilter
     permission_classes = (IsAdminOrReadOnly,)
-    # serializer_class = TitleListSerializer
+
     def get_serializer_class(self):
         if self.request.method in permissions.SAFE_METHODS:
             return TitleListSerializer
@@ -152,6 +163,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         serializer.save(author=self.request.user, title=title)
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     """Просмотр и редактирование комментариев."""

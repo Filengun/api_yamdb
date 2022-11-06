@@ -125,8 +125,6 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
-#Ребята, сверху я добавила пагинацию ♡♡♡♡♡ По умолчанию, где пагинейшон класс будет не описан, то будет использоваться по умолчанию. Но можно добавить pagination_class во вью.
-
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),

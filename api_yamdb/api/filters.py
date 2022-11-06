@@ -1,6 +1,7 @@
 from reviews.models import Title
 from django_filters import rest_framework as filters
 
+
 class TitlesFilter(filters.FilterSet):
     category = filters.CharFilter(
         field_name='category__slug',

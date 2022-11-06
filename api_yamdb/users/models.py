@@ -10,8 +10,12 @@ ROLE = (
 
 class User(AbstractUser):
     first_name = models.CharField(max_length=150, blank=True)
-    role = models.CharField(choices=ROLE, max_length=50, default='user') #даша: max_length=50, чтобы запустился сервак
-    bio = models.CharField(verbose_name='Биография', max_length=1024, blank=True) #даша: max_length=1024, чтобы запустился сервак
+    role = models.CharField(choices=ROLE, max_length=50, default='user')
+    bio = models.CharField(
+        verbose_name='Биография',
+        max_length=1024,
+        blank=True
+    )
     email = models.EmailField(
         max_length=254,
         unique=True,
