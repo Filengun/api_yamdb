@@ -1,26 +1,26 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework_simplejwt.tokens import AccessToken
 
-from api.permissions import IsAdminOrSuperUser
 from api.serializers import (TokenSerializer, UsersSerializer)
 from users.models import User
 from django.contrib.auth.tokens import default_token_generator
 
 from rest_framework.filters import SearchFilter
 from .filters import TitlesFilter
-from .permissions import IsAdminOrSuperUser, IsAdminOrReadOnly
+from .permissions import IsAuthorOrReadOnly, IsAdminOrSuperUser, IsAdminOrReadOnly, IsModeratorOrReadOnly
 from django.db.models import Avg #Для рейтинга
 
 from api_yamdb.services import send_confirmation_code
 
 
 from django.shortcuts import render
-from .serializers import CategorySerializer, GenreSerializer, TitleListSerializer, TitleCreateSerializer, UserPersonalDataSerializer, UserSignUpSerializer
+from .serializers import CategorySerializer, GenreSerializer, TitleListSerializer, TitleCreateSerializer, UserPersonalDataSerializer, UserSignUpSerializer, ReviewSerializer
 from reviews.models import Category, Comment, Genre, Review, Title
 from rest_framework import permissions
 
@@ -136,3 +136,19 @@ class TitleViewSet(viewsets.ModelViewSet):
         if self.request.method in permissions.SAFE_METHODS:
             return TitleListSerializer
         return TitleCreateSerializer
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthorOrReadOnly,)
+    serializer_class = ReviewSerializer
+    pagination_class = LimitOffsetPagination
+
+    def get_queryset(self):
+        """Возвращает queryset c отзывами для произведения."""
+        title_id = self.kwargs.get('title_id')
+        title = get_object_or_404(Title, id=title_id)
+        return title.reviews.all()
+
+    def perform_create(self, serializer):
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        serializer.save(author=self.request.user, title=title)

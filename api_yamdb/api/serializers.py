@@ -1,4 +1,4 @@
-from reviews.models import Category, Genre, Title
+from reviews.models import Category, Comment, Genre, Title, Review
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from users.models import User
@@ -104,3 +104,24 @@ class UserSignUpSerializer(UsersSerializer):
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        slug_field='username', read_only=True
+    )
+
+    class Meta:
+        model = Review
+        fields = ('id', 'text', 'author', 'score', 'pub_date')
+
+    def create(self, validated_data):
+        title = validated_data.get('title')
+        user = validated_data.get('author')
+        if title.reviews.filter(author=user).exists():
+            raise serializers.ValidationError(
+                'Нельзя отставить больше одного отзыва к произведению.'
+            )
+        review = Review.objects.create(**validated_data)
+        return review
+
