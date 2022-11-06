@@ -20,13 +20,13 @@ from api_yamdb.services import send_confirmation_code
 
 
 from django.shortcuts import render
-from .serializers import CategorySerializer, GenreSerializer, TitleListSerializer, TitleCreateSerializer, UserPersonalDataSerializer
+from .serializers import CategorySerializer, GenreSerializer, TitleListSerializer, TitleCreateSerializer, UserPersonalDataSerializer, UserSignUpSerializer
 from reviews.models import Category, Comment, Genre, Review, Title
 from rest_framework import permissions
 
 
 class UserSignupView(GenericAPIView):
-    serializer_class = UsersSerializer
+    serializer_class = UserSignUpSerializer
     permission_classes = (AllowAny,)
 
     def post(self, request):
@@ -72,7 +72,7 @@ class UserViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,),
         serializer_class=UserPersonalDataSerializer
     )
-    def personal_data(self, request):
+    def about_me(self, request):
         if request.method == 'PATCH':
             serializer = self.get_serializer(request.user, request.data)
             serializer.is_valid(raise_exception=True)
@@ -91,6 +91,18 @@ class CategoryViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
     permission_classes = (IsAdminOrReadOnly,)
 
+    @action(
+        detail=False,
+        methods=['delete'],
+        url_path=r'(?P<slug>\w+)',
+        lookup_field='slug',
+    )
+    def delete_category(self, request, slug):
+        category = self.get_object()
+        serializer = self.get_serializer(category)
+        category.delete()
+        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+
 
 class GenreViewSet(viewsets.ModelViewSet):
     """Жанр. GET, POST, DEL."""
@@ -100,6 +112,18 @@ class GenreViewSet(viewsets.ModelViewSet):
     filter_backends = [SearchFilter]
     lookup_field = 'slug'
     permission_classes = (IsAdminOrReadOnly,)
+
+    @action(
+        detail=False,
+        methods=['delete'],
+        url_path=r'(?P<slug>\w+)',
+        lookup_field='slug',
+    )
+    def delete_category(self, request, slug):
+        category = self.get_object()
+        serializer = self.get_serializer(category)
+        category.delete()
+        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
