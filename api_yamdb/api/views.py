@@ -119,7 +119,7 @@ class GenreViewSet(viewsets.ModelViewSet):
         url_path=r'(?P<slug>\w+)',
         lookup_field='slug',
     )
-    def delete_category(self, request, slug):
+    def delete_genre(self, request, slug):
         category = self.get_object()
         serializer = self.get_serializer(category)
         category.delete()
